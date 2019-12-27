@@ -13,3 +13,4 @@ plugins {
 ### Notes
 
 * Expects multi-module gradle project where each module implements extensions targeting a single spinnaker service.
+* Storage for plugin artifacts(bundled zip) can be like S3, GCS, jCenter or artifactory etc. ????
