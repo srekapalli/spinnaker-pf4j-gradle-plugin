@@ -1,4 +1,4 @@
-## Spinnaker Plugin Distribution Plugin.
+## Gradle plugin for developing spinnaker extension points implementation.
 
 This **gradle** plugin allows Spinnaker developers to bundle, publish and register **_"spinnaker plugins"_** with spinnaker.
 
