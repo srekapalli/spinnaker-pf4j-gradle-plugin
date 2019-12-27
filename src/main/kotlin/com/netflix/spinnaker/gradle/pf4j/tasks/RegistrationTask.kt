@@ -22,6 +22,7 @@ import org.gradle.api.tasks.TaskAction
 
 /**
  * Task to register a spinnaker plugin.
+ * This task will invoke a spinnaker API to register 'spinnaker plugin' metadata with Front50.
  */
 open class RegistrationTask : DefaultTask() {
 

@@ -37,6 +37,10 @@ class SpinnakerPf4jPlugin : Plugin<Project> {
             it.dependsOn(buildTask)
         }
 
+        buildTask.doLast {
+            project.tasks.findByName("computeChecksum")
+        }
+
         // Also add 'registerPlugin' task
         project.tasks.register("registerPlugin", RegistrationTask::class.java)
 

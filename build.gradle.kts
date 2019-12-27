@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
+
 plugins {
     // Apply the Java Gradle plugin development plugin to add support for developing Gradle plugins
     `java-gradle-plugin`
+    `maven-publish`
 
     // Apply the Kotlin JVM plugin to add support for Kotlin.
     id("org.jetbrains.kotlin.jvm").version("1.3.31")
-    id("org.gradle.crypto.checksum").version("1.1.0")
 }
+
+group = "com.netflix.spinnaker.gradle.pf4j"
+version = "1.0"
 
 repositories {
     jcenter()
@@ -64,4 +68,16 @@ val functionalTest by tasks.creating(Test::class) {
 val check by tasks.getting(Task::class) {
     // Run the functional tests as part of `check`
     dependsOn(functionalTest)
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = "com.netflix.spinnaker.gradle.pf4j"
+            artifactId = "spinnaker-pf4j-gradle-plugin"
+            version = "1.0"
+
+            from(components["java"])
+        }
+    }
 }
