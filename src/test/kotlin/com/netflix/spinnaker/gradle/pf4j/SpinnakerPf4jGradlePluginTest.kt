@@ -14,6 +14,7 @@ class SpinnakerPf4jGradlePluginTest {
         project.plugins.apply("com.netflix.spinnaker.gradle.pf4j.spinnakerpf4j")
 
         // Verify the result
-        assertNotNull(project.tasks.findByName("createPluginBundle"))
+        assertNotNull(project.tasks.findByName("computeChecksum"))
+        assertNotNull(project.tasks.findByName("registerPlugin"))
     }
 }

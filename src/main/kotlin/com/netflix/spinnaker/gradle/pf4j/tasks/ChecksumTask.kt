@@ -26,7 +26,7 @@ import java.io.File
 /**
  * Task to calculate checksum for each plugin artifact
  */
-open class BundleTask : DefaultTask() {
+open class ChecksumTask : DefaultTask() {
 
     @TaskAction
     fun doAction() {
@@ -40,7 +40,7 @@ open class BundleTask : DefaultTask() {
             }
             return
         }
-        project.logger.log(LogLevel.WARN, "No sub projects found. Nothing to bundle!!")
+        project.logger.log(LogLevel.WARN, "No sub projects found. Nothing to checksum!!")
     }
 
 }

@@ -16,7 +16,7 @@
 
 package com.netflix.spinnaker.gradle.pf4j
 
-import com.netflix.spinnaker.gradle.pf4j.tasks.BundleTask
+import com.netflix.spinnaker.gradle.pf4j.tasks.ChecksumTask
 import com.netflix.spinnaker.gradle.pf4j.tasks.RegistrationTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -31,9 +31,9 @@ class SpinnakerPf4jPlugin : Plugin<Project> {
         // Apply distribution plugin.
         project.plugins.apply("distribution")
 
-        // Register bundle task and make build task as a dependency.
+        // Register checksum task and make build task as a dependency.
         val buildTask: Task = project.tasks.getByName("build")
-        project.tasks.register("createPluginBundle", BundleTask::class.java) {
+        project.tasks.register("computeChecksum", ChecksumTask::class.java) {
             it.dependsOn(buildTask)
         }
 

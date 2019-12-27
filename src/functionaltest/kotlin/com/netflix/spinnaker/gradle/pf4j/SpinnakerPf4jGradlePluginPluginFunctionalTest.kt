@@ -27,11 +27,11 @@ class SpinnakerPf4jGradlePluginPluginFunctionalTest {
         val runner = GradleRunner.create()
         runner.forwardOutput()
         runner.withPluginClasspath()
-        runner.withArguments("createPluginBundle")
+        runner.withArguments("computeChecksum")
         runner.withProjectDir(projectDir)
         val result = runner.build();
 
         // Verify the result
-        assertTrue(result.output.contains("No sub projects found. Nothing to bundle!!"))
+        assertTrue(result.output.contains("No sub projects found. Nothing to checksum!!"))
     }
 }
