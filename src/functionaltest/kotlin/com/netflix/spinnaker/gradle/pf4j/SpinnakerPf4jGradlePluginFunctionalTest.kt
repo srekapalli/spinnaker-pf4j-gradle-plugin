@@ -9,9 +9,9 @@ import kotlin.test.Test
 import kotlin.test.assertTrue
 
 /**
- * A simple functional test for the 'com.netflix.spinnaker.gradle.pf4j.spinnakerpf4j' plugin.
+ * Functional test for the 'com.netflix.spinnaker.gradle.pf4j.spinnakerpf4j' plugin.
  */
-class SpinnakerPf4jGradlePluginPluginFunctionalTest {
+class SpinnakerPf4jGradlePluginFunctionalTest {
     @Test fun `can run task`() {
         // Setup the test build
         val projectDir = File("build/functionaltest")
@@ -29,9 +29,9 @@ class SpinnakerPf4jGradlePluginPluginFunctionalTest {
         runner.withPluginClasspath()
         runner.withArguments("computeChecksum")
         runner.withProjectDir(projectDir)
-        val result = runner.build();
+        val result = runner.build()
 
         // Verify the result
-        assertTrue(result.output.contains("No sub projects found. Nothing to checksum!!"))
+        assertTrue(result.output.contains("Nothing to checksum!!"))
     }
 }

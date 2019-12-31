@@ -28,19 +28,27 @@ import java.io.File
  */
 open class ChecksumTask : DefaultTask() {
 
+   init {
+       outputs.upToDateWhen { false } // No caching.
+   }
+
     @TaskAction
     fun doAction() {
+
         if (project.subprojects.size > 0) {
             project.subprojects.forEach { project: Project ->
                 File(project.buildDir.absolutePath + "/libs").walk().forEach { file: File ->
-                    project.ant { ant: AntBuilder ->
-                        ant.invokeMethod("checksum", mapOf("file" to file))
+                    if (file.isFile) {
+                        project.logger.debug("File: {}", file.toString())
+                        project.ant { ant: AntBuilder ->
+                            ant.invokeMethod("checksum", mapOf("file" to file))
+                        }
                     }
                 }
             }
             return
         }
-        project.logger.log(LogLevel.WARN, "No sub projects found. Nothing to checksum!!")
+        project.logger.log(LogLevel.WARN, "Nothing to checksum!!")
     }
 
 }

@@ -21,37 +21,37 @@ import com.netflix.spinnaker.gradle.pf4j.tasks.RegistrationTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.distribution.DistributionContainer
+import org.gradle.api.tasks.bundling.Zip
 
 /**
  * Gradle plugin to support spinnaker plugin development life cycle.
  */
 class SpinnakerPf4jPlugin : Plugin<Project> {
     override fun apply(project: Project) {
-        // Apply distribution plugin.
-        project.plugins.apply("distribution")
 
-        // Register checksum task and make build task as a dependency.
-        val buildTask: Task = project.tasks.getByName("build")
-        project.tasks.register("computeChecksum", ChecksumTask::class.java) {
-            it.dependsOn(buildTask)
-        }
-
-        buildTask.doLast {
-            project.tasks.findByName("computeChecksum")
-        }
-
-        // Also add 'registerPlugin' task
+        project.tasks.register("computeChecksum", ChecksumTask::class.java)
         project.tasks.register("registerPlugin", RegistrationTask::class.java)
 
-        // Configure distribution plugin.
-        project.extensions.getByType(DistributionContainer::class.java).all {
-            project.subprojects.forEach { sub ->
-                it.contents.from(
-                        "${sub.buildDir}/libs/${sub.name}.jar",
-                        "${sub.buildDir}/libs/${sub.name}.jar.MD5")
-                it.contents.into("distributions")
+        val allBuildDirs: MutableList<String> = mutableListOf()
+        project.subprojects.forEach {
+            allBuildDirs.add("${it.name}/build/libs")
+        }
+        project.logger.debug(allBuildDirs.toString())
+        project.tasks.register<Zip>("distPluginZip", Zip::class.java) {
+            it.from(allBuildDirs).into("/")
+            it.archiveFileName.set("${project.name}-${project.version}.zip")
+            it.include("*")
+            it.destinationDirectory.set(project.rootDir)
+        }
+
+        val computeChecksumTask: Task = project.tasks.getByName("computeChecksum")
+        project.afterEvaluate {
+            project.subprojects.forEach {
+                it.afterEvaluate { subProject ->
+                    computeChecksumTask.dependsOn.add(subProject.tasks.getByName("build"))
+                }
             }
+            project.tasks.getByName("distPluginZip").dependsOn(computeChecksumTask)
         }
     }
 }

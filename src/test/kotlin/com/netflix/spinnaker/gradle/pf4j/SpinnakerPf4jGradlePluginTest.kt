@@ -5,7 +5,7 @@ import kotlin.test.Test
 import kotlin.test.assertNotNull
 
 /**
- * A simple unit test for the 'com.netflix.spinnaker.gradle.pf4j.spinnakerpf4j' plugin.
+ * Unit test for the 'com.netflix.spinnaker.gradle.pf4j.spinnakerpf4j' plugin.
  */
 class SpinnakerPf4jGradlePluginTest {
     @Test fun `plugin registers task`() {
@@ -16,5 +16,6 @@ class SpinnakerPf4jGradlePluginTest {
         // Verify the result
         assertNotNull(project.tasks.findByName("computeChecksum"))
         assertNotNull(project.tasks.findByName("registerPlugin"))
+        assertNotNull(project.tasks.findByName("distPluginZip"))
     }
 }
