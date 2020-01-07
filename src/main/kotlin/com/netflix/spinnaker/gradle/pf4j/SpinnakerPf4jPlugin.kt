@@ -21,6 +21,9 @@ import com.netflix.spinnaker.gradle.pf4j.tasks.RegistrationTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.CopySpec
+import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.bundling.Zip
 
 /**
@@ -33,8 +36,29 @@ class SpinnakerPf4jPlugin : Plugin<Project> {
         project.tasks.register("registerPlugin", RegistrationTask::class.java)
 
         val allBuildDirs: MutableList<String> = mutableListOf()
-        project.subprojects.forEach {
-            allBuildDirs.add("${it.name}/build/libs")
+        project.subprojects.forEach { subProject ->
+            allBuildDirs.add("${subProject.name}/build/libs")
+
+            if (!subProject.name.contains("deck")) { // TODO: better way to identify type of project.
+                subProject.logger.warn("Adding assemble for ${subProject.name}......")
+                val jar = subProject.tasks.getByName(JavaPlugin.JAR_TASK_NAME) as Jar
+                val childSpec: CopySpec = subProject.copySpec().with(jar).into("classes")
+
+                val libSpec: CopySpec = subProject.copySpec().from(subProject.configurations.getByName("runtimeClasspath")).into("lib")
+                subProject.tasks.register<Jar>("assembleServicePluginZip", Jar::class.java) {
+                    it.archiveBaseName.set(subProject.name)
+                    it.archiveExtension.set("zip")
+                    it.with(childSpec, libSpec)
+                    it.dependsOn(subProject.tasks.findByName("jar"))
+                    it.doLast {
+                        subProject.logger.warn("Building project......")
+                    }
+                }
+            } else {
+                subProject.tasks.register("assembleServicePluginZip") {
+                    subProject.logger.quiet("Not a java lib..........")
+                }
+            }
         }
         project.logger.debug(allBuildDirs.toString())
         project.tasks.register<Zip>("distPluginZip", Zip::class.java) {
@@ -46,9 +70,10 @@ class SpinnakerPf4jPlugin : Plugin<Project> {
 
         val computeChecksumTask: Task = project.tasks.getByName("computeChecksum")
         project.afterEvaluate {
-            project.subprojects.forEach {
-                it.afterEvaluate { subProject ->
-                    computeChecksumTask.dependsOn.add(subProject.tasks.getByName("build"))
+            project.subprojects.forEach { subProject ->
+                subProject.afterEvaluate { pluginProject ->
+                    pluginProject.tasks.getByName("build").finalizedBy(pluginProject.tasks.getByName("assembleServicePluginZip"))
+                    computeChecksumTask.dependsOn.add(pluginProject.tasks.getByName("build"))
                 }
             }
             project.tasks.getByName("distPluginZip").dependsOn(computeChecksumTask)
