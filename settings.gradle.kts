@@ -1,1 +1,1 @@
-rootProject.name = "spinnaker-pf4j-gradle-plugin"
+rootProject.name = "spinnaker-extension-gradle-plugin"

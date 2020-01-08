@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.netflix.spinnaker.gradle.pf4j
+package com.netflix.spinnaker.gradle.extension
 
-import com.netflix.spinnaker.gradle.pf4j.tasks.ChecksumTask
-import com.netflix.spinnaker.gradle.pf4j.tasks.RegistrationTask
+import com.netflix.spinnaker.gradle.extension.tasks.ChecksumTask
+import com.netflix.spinnaker.gradle.extension.tasks.RegistrationTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -29,7 +29,7 @@ import org.gradle.api.tasks.bundling.Zip
 /**
  * Gradle plugin to support spinnaker plugin development life cycle.
  */
-class SpinnakerPf4jPlugin : Plugin<Project> {
+class SpinnakerExtensionPlugin : Plugin<Project> {
     override fun apply(project: Project) {
 
         project.tasks.register("computeChecksum", ChecksumTask::class.java)
